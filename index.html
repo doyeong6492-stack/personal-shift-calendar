@@ -1,0 +1,250 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>교대근무</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f6f8fc;color:#172033;font-family:Arial,'Noto Sans KR',sans-serif}
+.wrap{max-width:760px;margin:auto;padding:14px 8px}h1{font-size:21px;margin:5px 0}.sub{font-size:12px;color:#526176;margin:8px 0 17px}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:12px}
+button{background:white;border:1px solid #cbd5e1;border-radius:8px;padding:10px;min-height:44px;font-size:15px}
+#month{font-size:18px}.groups{display:flex;gap:6px;margin-bottom:12px}.groups button{flex:1}
+.groups .on{background:#2563eb;color:white;border-color:#2563eb}
+.week,.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.week div{text-align:center;padding:9px 0;font-size:13px;font-weight:bold;color:#64748b}
+.week div:first-child,.sun .date{color:#d32f2f}.week div:last-child,.sat .date{color:#2563eb}
+.cell{background:white;border:1px solid #dce2eb;margin:-1px 0 0 -1px;min-height:85px;padding:5px 3px;min-width:0}
+.blank{background:#edf1f6}.date{font-size:13px;font-weight:bold;margin-bottom:5px}
+.shift{font-size:11px;line-height:1.55;white-space:nowrap}.mine{font-weight:bold;color:#1d4ed8}
+.status{font-size:11px;font-weight:bold;color:#64748b;margin-top:4px}
+.working{background:#fff9df;box-shadow:inset 0 0 0 1px #e9cd73}.working .status{color:#806016}
+.legend{font-size:12px;line-height:1.6;color:#536276;margin-top:14px}
+@media(max-width:380px){.wrap{padding:10px 4px}.cell{min-height:78px;padding:4px 2px}.shift,.status{font-size:10px}.date{font-size:12px}}
+.holiday{font-size:10px;color:#c62828;font-weight:700;line-height:1.2;overflow-wrap:anywhere;margin-top:3px}.holiday-date{color:#c62828!important}.notice{font-size:12px;color:#a16207;margin-top:8px}
+.cell[data-date]{cursor:pointer;position:relative}.cell[data-date]:focus-visible{outline:3px solid #111827;z-index:1}
+.cell .tag{display:block;font-size:10px;font-weight:800;color:#7c3aed;overflow-wrap:anywhere;margin-top:2px}
+.cell.changed{border-bottom:3px solid #8b5cf6}
+.editor{border:1px solid #cbd5e1;background:white;border-radius:12px;padding:14px;margin-top:16px}
+.editor h2{font-size:17px;margin:0 0 10px}.editor label{display:block;font-size:13px;margin:9px 0 5px}
+.editor select,.editor input{width:100%;border:1px solid #94a3b8;border-radius:7px;padding:11px;font-size:16px;background:white}
+.editor .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.editor .actions button{flex:1}
+.editor .primary{background:#2563eb;color:white;border-color:#2563eb}
+.editor .secondary{background:#f1f5f9}.editor .hint{font-size:12px;color:#64748b;margin:8px 0}
+.backup{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.backup button{font-size:13px;flex:1}
+
+.cell .tag{font-size:10px;line-height:1.3;margin-top:3px;color:#7c3aed;display:block;overflow-wrap:anywhere}.cell .shift-tag{color:#9a3412}
+.cell .shift{font-weight:600;letter-spacing:-.45px;font-size:clamp(9px,2.55vw,12px);white-space:nowrap}.cell .shift:first-of-type{color:#b45309}.cell .shift:nth-of-type(2){color:#334e87}
+.cell{border-radius:3px}.cell .tag{border-radius:4px;background:#f5f0ff;padding:2px 1px;line-height:1.25}.cell .shift-tag{background:#fff0e4}
+#approvalPanel,#adminPanel{background:white;border:1px solid #cbd5e1;border-radius:12px;padding:13px;margin:10px 0}#approvalPanel[hidden],#adminPanel[hidden]{display:none}#adminPanel .person{padding:10px 0;border-bottom:1px solid #e2e8f0;overflow-wrap:anywhere}#adminPanel .person button{margin:4px 4px 0 0}#otherLeave[hidden]{display:none}#otherLeave{margin-top:6px}#adminToggle{margin-top:6px}#editor[hidden]{display:none}
+
+/* 날짜 칸은 모든 주에서 같은 높이로 유지하고 긴 일정은 칸 내부에서만 스크롤 */
+.grid{grid-auto-rows:minmax(132px,auto);align-items:stretch}
+.cell{height:auto;min-height:132px;overflow:visible;overflow-wrap:anywhere}
+.cell .date{position:static}
+@media(max-width:430px){.grid{grid-auto-rows:minmax(116px,auto)}.cell{height:auto;min-height:116px}}
+
+/* 인접 월 날짜: 흐린 색상으로 연결 */
+.cell.adjacent{background:#f0f2f6;color:#a1a9b6;box-shadow:none;border-color:#dce2eb;cursor:default}
+.cell.adjacent .date,.cell.adjacent .shift,.cell.adjacent .status{color:#a1a9b6!important;font-weight:400}
+.cell.adjacent .tag{color:#a1a9b6!important}
+.cell.covering{background:#fff9df;box-shadow:inset 0 0 0 1px #e9cd73}
+.cell .cover-active{color:#854d0e;font-weight:800}
+#authBar{background:#fff9df;border:1px solid #e7c65b;border-radius:12px;padding:12px;margin:12px 0;font-size:14px}#authBar button{margin:4px;padding:9px 13px}#authState{font-weight:700}#syncState{font-size:13px;color:#735b16}button:disabled{opacity:.45;cursor:not-allowed}
+
+/* 모바일 상단: 로그인 정보를 한 줄로 간소화 */
+#authBar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:transparent;border:0;border-bottom:1px solid #e2e8f0;border-radius:0;padding:4px 0 10px;margin:2px 0 14px;min-height:40px}
+#syncState{font-size:12px;color:#475569;min-width:0;overflow-wrap:anywhere}
+#syncState::before{content:"⚪ ";}
+#authBar:has(#logoutGoogle:not([hidden])) #syncState::before{content:"🟢 ";}
+.authActions{display:flex;align-items:center;gap:5px;flex-shrink:0}
+#authBar button{font-size:12px;min-height:34px;padding:6px 9px;margin:0;border-radius:8px}
+#authBar [hidden]{display:none!important}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:380px){#authBar button{padding:5px 7px;font-size:11px}#syncState{font-size:11px}}
+#calendarArea[hidden],#historyPanel[hidden]{display:none!important}
+#historyPanel{background:#fff;border:1px solid #cbd5e1;border-radius:12px;padding:14px;margin:12px 0}
+#historyPanel h2{margin:0 0 10px;font-size:17px}#historyList .historyRow{padding:10px 0;border-bottom:1px solid #e2e8f0;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+#historyPanel .historyActions{display:flex;gap:8px;margin-bottom:10px}#historyPanel button{font-size:13px}
+.date-changes{margin:10px 0;padding:10px;background:#f8fafc;border:1px solid #dbeafe;border-radius:9px}.date-changes strong{display:block;margin-bottom:6px;font-size:13px}.date-changes button{display:block;width:100%;text-align:left;margin:5px 0;padding:9px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;font-size:13px}.date-changes button.active{border-color:#2563eb;background:#eff6ff}.date-changes p{font-size:12px;color:#64748b;margin:3px 0}.change-entry{display:flex;align-items:stretch;gap:6px;margin:5px 0}.date-changes .change-entry button[data-edit-target]{flex:1;min-width:0;margin:0}.date-changes .change-entry .entry-delete{width:auto;flex:0 0 auto;margin:0;padding:8px 12px;border-color:#fecaca;background:#fff1f2;color:#9f1239;text-align:center;font-weight:700}.date-changes .change-entry .entry-delete:disabled{opacity:.5}</style><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#2563eb"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" href="icon.svg"><style>.personal-bar{padding:10px 12px;border-radius:10px;background:#eff6ff;color:#1e40af;font-size:13px;margin:10px 0;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.personal-bar span{font-size:12px}</style></head><body><main class="wrap"><h1>📅 교대근무</h1><div class="personal-bar">🔒 개인용 · 이 기기에만 저장 <span id="syncState">저장 준비 완료</span></div><div id="calendarArea"><div class="toolbar"><button type="button" id="prev">‹ 이전</button><strong id="month">2026년 11월</strong><button type="button" id="next">다음 ›</button></div><p class="hint" style="font-size:12px;color:#64748b;margin:0 0 7px">조회할 조 선택 · 날짜를 누르면 각 조의 개인 기록을 수정할 수 있습니다.</p><div class="groups" id="groups"><button type="button" data-group="1" class="">1조</button><button type="button" data-group="2" class="">2조</button><button type="button" data-group="3" class="">3조</button><button type="button" data-group="4" class="on">4조</button></div><div class="week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div><div class="grid" id="grid"><div class="cell working sun"><div class="date">1</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">2</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">3</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">4</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">5</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">6</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell sat"><div class="date">7</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell sun"><div class="date">8</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">9</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">10</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">11</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">12</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">13</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working sat"><div class="date">14</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell sun"><div class="date">15</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">16</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">17</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">18</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">19</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">20</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working sat"><div class="date">21</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working sun"><div class="date">22</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">23</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">24</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">25</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">26</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">27</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell sat"><div class="date">28</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working sun"><div class="date">29</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">30</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div></div><section class="editor" id="editor" hidden><h2 id="editTitle">근무 변경</h2><p class="hint" id="baseInfo"></p><div id="dateChanges" class="date-changes" aria-live="polite"></div><label for="editGroup">수정할 조 선택 (상단 조 선택과 별개)</label><select id="editGroup"><option value="1">1조</option><option value="2">2조</option><option value="3">3조</option><option value="4">4조</option></select><label for="editCover">대직 (선택한 조의 근무를 대신하는 조)</label><select id="editCover"><option value="">대직 없음</option><option value="1">1조</option><option value="2">2조</option><option value="3">3조</option><option value="4">4조</option></select><label for="editLeave">연가·공가·교육 등 표시</label><select id="editLeave"><option value="">없음</option><option value="연가">연가</option><option value="공가">공가</option><option value="교육">교육</option><option value="병가">병가</option><option value="특별휴가">특별휴가</option><option value="기타">직접 입력</option></select><div id="otherLeave" hidden><p class="hint">입력한 문구가 달력에 그대로 표시됩니다.</p><label for="editLeaveText">직접 입력 내용 (최대 24자)</label><input id="editLeaveText" type="text" maxlength="24" placeholder="예: 오전 반가, 오후 반가, 반공가"></div><div class="actions"><button type="button" class="primary" id="saveEdit">저장</button><button type="button" class="secondary" id="clearEdit">변경 삭제</button><button type="button" id="closeEdit">닫기</button></div><p class="hint" id="saveMsg" aria-live="polite"></p></section><div class="backup"><button type="button" id="exportData">변경내역 백업</button><button type="button" id="importData">백업 불러오기</button><input type="file" id="importFile" accept=".json,application/json" hidden></div><p class="notice">날짜를 누르면 선택한 조의 휴가·교육·대직을 기록할 수 있습니다. 대직은 지정한 날짜에만 표시되며 원래 근무조 배치는 유지됩니다. 변경 사항은 이 기기에만 저장되며 다른 사용자에게 공유되지 않습니다. 수정할 조는 날짜를 누른 뒤 선택할 수 있습니다.</p><div class="notice" id="holidayNotice"></div><div class="legend">노란색 = 선택한 조의 주간·야간·대직 근무일 · 보라색 = 조별 휴가·교육 · 빨간 날짜 = 일요일·공휴일<br>기준: 2026년 11월 1일 주간 4조 / 야간 3조</div></div></main><script>
+(function(){
+var today=new Date();
+var y=today.getFullYear(),m=today.getMonth()+1,editing=null;
+// 조회용 조 선택은 이 브라우저에만 보관합니다. 공동 근무표 데이터와 별개입니다.
+var savedGroup;
+try { savedGroup=Number(localStorage.getItem('lab_shift_view_group')); } catch(e) { savedGroup=0; }
+var group=([1,2,3,4].includes(savedGroup)?savedGroup:4);
+var storeKey='personal_shift_calendar_v1';
+var changes={};
+var user={displayName:'나'},ready=true,approved=true;
+var syncState=document.getElementById('syncState');
+function setSync(t){syncState.textContent=t}
+function updateAccess(){}
+function validate(v){return {shift:['주간','야간','비번','휴무'].includes(v.shift)?v.shift:'',cover:['1','2','3','4'].includes(String(v.cover))?String(v.cover):'',leave:['연가','공가','교육','병가','특별휴가','기타'].includes(v.leave)?v.leave:'',leaveText:typeof v.leaveText==='string'?v.leaveText.slice(0,24):''}}
+function persist(){try{localStorage.setItem(storeKey,JSON.stringify(changes));setSync('이 기기에 저장됨');return true}catch(e){setSync('저장 실패 · 저장 공간 확인');alert('기기 저장에 실패했습니다: '+e.message);return false}}
+try{var saved=JSON.parse(localStorage.getItem(storeKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved)){Object.keys(saved).forEach(function(k){if(/^\d{4}-\d{2}-\d{2}\|[1-4]$/.test(k)&&saved[k]&&typeof saved[k]==='object')changes[k]=validate(saved[k])})}}catch(e){setSync('저장 데이터 읽기 실패 · 백업 확인 필요')}
+async function writeChangeWithAudit(k,v){
+ if(!/^\d{4}-\d{2}-\d{2}\|[1-4]$/.test(k))throw Error('날짜 오류');
+ var old=changes[k];if(v&&(v.shift||v.cover||v.leave))changes[k]=validate(v);else delete changes[k];
+ if(!persist()){if(old)changes[k]=old;else delete changes[k];throw Error('저장 실패')}
+ render();renderDateChanges();
+}
+function keyFor(year,mon,day,g){return year+'-'+String(mon).padStart(2,'0')+'-'+String(day).padStart(2,'0')+'|'+g}
+function baseStatus(year,mon,day,g){
+ var offset=Math.round((Date.UTC(year,mon-1,day)-Date.UTC(2026,10,1))/86400000),k=mod(offset);
+ var dg=mod(3+k)+1,ng=mod(2+k)+1,og=mod(1+k)+1;
+ return g===dg?'주간':g===ng?'야간':g===og?'비번':'휴무';
+}
+function safe(t){return String(t||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+
+var holidays={"2026":{"01-01":"신정","02-16":"설 연휴","02-17":"설날","02-18":"설 연휴","03-01":"삼일절","03-02":"대체공휴일","05-01":"노동절","05-05":"어린이날","05-24":"부처님오신날","05-25":"대체공휴일","06-03":"지방선거일","06-06":"현충일","07-17":"제헌절","08-15":"광복절","08-17":"대체공휴일","09-24":"추석 연휴","09-25":"추석","09-26":"추석 연휴","10-03":"개천절","10-05":"대체공휴일","10-09":"한글날","12-25":"성탄절"},"2027":{"01-01":"신정","02-06":"설 연휴","02-07":"설날","02-08":"설 연휴","02-09":"대체공휴일","03-01":"삼일절","05-01":"노동절","05-03":"대체공휴일","05-05":"어린이날","05-13":"부처님오신날","06-06":"현충일","07-17":"제헌절","07-19":"대체공휴일","08-15":"광복절","08-16":"대체공휴일","09-14":"추석 연휴","09-15":"추석","09-16":"추석 연휴","10-03":"개천절","10-04":"대체공휴일","10-09":"한글날","10-11":"대체공휴일","12-25":"성탄절","12-27":"대체공휴일"}};
+var grid=document.getElementById('grid'),month=document.getElementById('month'),buttons=document.getElementById('groups');
+function mod(n){return ((n%4)+4)%4}
+function render(){
+ month.textContent=y+'년 '+m+'월';
+ document.getElementById('holidayNotice').textContent=holidays[y]?'공휴일 적용 연도: '+y+'년 (임시공휴일은 추후 변경 가능)':'공휴일 자료 미확인 연도입니다. 근무 패턴만 표시합니다.';
+ var all=buttons.getElementsByTagName('button');
+ for(var a=0;a<all.length;a++)all[a].className=(Number(all[a].getAttribute('data-group'))===group?'on':'');
+ var first=new Date(Date.UTC(y,m-1,1)).getUTCDay();
+ var count=new Date(Date.UTC(y,m,0)).getUTCDate();
+ var base=Date.UTC(2026,10,1),out='';
+ function adjacentCell(dayOffset){
+  var dt=new Date(Date.UTC(y,m-1,dayOffset));
+  var yy=dt.getUTCFullYear(),mm=dt.getUTCMonth()+1,dd=dt.getUTCDate();
+  var offset=Math.round((Date.UTC(yy,mm-1,dd)-base)/86400000),k=mod(offset);
+  var dg=mod(3+k)+1,ng=mod(2+k)+1,og=mod(1+k)+1;
+  var st=group===dg?'주간':group===ng?'야간':group===og?'비번':'휴무';
+  return '<div class="cell adjacent" aria-label="'+yy+'년 '+mm+'월 '+dd+'일"><div class="date">'+dd+'</div><div class="shift">주 '+dg+'조</div><div class="shift">야 '+ng+'조</div><div class="status">'+st+'</div></div>';
+ }
+ for(var i=0;i<first;i++)out+=adjacentCell(i-first+1);
+ for(var d=1;d<=count;d++){
+  var offset=Math.round((Date.UTC(y,m-1,d)-base)/86400000),k=mod(offset);
+  var day=mod(3+k)+1,night=mod(2+k)+1,off=mod(1+k)+1;
+  var status=group===day?'주간':group===night?'야간':group===off?'비번':'휴무';
+  var change=changes[keyFor(y,m,d,group)]||{};
+  if(change.shift)status=change.shift;
+  var coverForSelected=[];
+  for(var cg=1;cg<=4;cg++){
+    var cv=changes[keyFor(y,m,d,cg)]||{};
+    if(String(cv.cover)===String(group) && cg!==group)coverForSelected.push(cg);
+  }
+  var isCover=coverForSelected.length>0;
+  var wd=(first+d-1)%7,working=((status==='주간'||status==='야간')&&!change.cover&&!change.leave)||isCover;
+  var key=String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+  var holiday=holidays[y]&&holidays[y][key]?holidays[y][key]:'';
+  var tags='';
+  for(var gg=1;gg<=4;gg++){
+   var other=changes[keyFor(y,m,d,gg)]||{};
+   if(other.leave)tags+='<span class="tag" title="'+safe(other.leave==='기타'?(other.leaveText||'기타'):other.leave)+'">'+gg+'조 '+safe(other.leave==='기타'?(other.leaveText||'기타'):other.leave)+'</span>';
+   if(other.cover)tags+='<span class="tag shift-tag">'+gg+'조→'+safe(other.cover)+'조 대직</span>';
+  }
+  out+='<div tabindex="0" role="button" aria-label="'+d+'일 근무 수정" data-date="'+d+'" class="cell'+(working?' working':'')+(change.shift||change.cover||change.leave?' changed':'')+(wd===0?' sun':wd===6?' sat':'') +(isCover?' covering':'')+'"><div class="date'+(holiday?' holiday-date':'')+'">'+d+'</div><div class="shift'+(day===group?' mine':'')+'">☀️ 주간 '+day+'조</div><div class="shift'+(night===group?' mine':'')+'">🌙 야간 '+night+'조</div><div class="status">'+status+'</div>'+tags+'</div>';
+ }
+ var trailing=(7-((first+count)%7))%7;
+ for(var i=1;i<=trailing;i++)out+=adjacentCell(count+i);
+ grid.innerHTML=out;
+}
+function renderDateChanges(){
+ if(!editing)return;
+ var box=document.getElementById('dateChanges');
+ var entries=[];
+ for(var g=1;g<=4;g++){
+  var v=changes[keyFor(editing.y,editing.m,editing.d,g)];
+  if(v&&(v.leave||v.cover||v.shift)){
+   var label=v.leave==='기타'?(v.leaveText||'직접 입력'):(v.leave||'');
+   if(v.cover)label+=(label?' · ':'')+v.cover+'조 대직';
+   if(v.shift)label+=(label?' · ':'')+v.shift;
+   entries.push({g:g,label:label});
+  }
+ }
+ box.innerHTML='<strong>이 날짜에 등록된 변경 내역 (각 내역에서 바로 삭제 가능)</strong>'+
+  (entries.length?entries.map(function(e){return '<div class="change-entry"><button type="button" data-edit-target="'+e.g+'" class="'+(editing.g===e.g?'active':'')+'">'+e.g+'조 · '+safe(e.label)+'</button><button type="button" class="entry-delete" data-delete-target="'+e.g+'" aria-label="'+e.g+'조 변경 내역 삭제">삭제</button></div>'}).join(''):'<p>등록된 변경 내역이 없습니다.</p>');
+}
+document.getElementById('dateChanges').addEventListener('click',async function(e){
+ var del=e.target.closest('[data-delete-target]');
+ if(del){
+  if(!editing||!user||!ready)return;
+  var targetGroup=Number(del.getAttribute('data-delete-target'));
+  var targetKey=keyFor(editing.y,editing.m,editing.d,targetGroup);
+  if(!changes[targetKey]){document.getElementById('saveMsg').textContent='이미 삭제된 내역입니다.';return}
+  if(!confirm(targetGroup+'조 '+editing.m+'월 '+editing.d+'일 변경 내역을 삭제할까요?'))return;
+  del.disabled=true;
+  try{await writeChangeWithAudit(targetKey,null,'delete');delete changes[targetKey];renderDateChanges();setEditorGroup(editing.g);render();document.getElementById('saveMsg').textContent=targetGroup+'조 변경 내역 삭제 완료';}
+  catch(err){del.disabled=false;alert('삭제 실패: '+err.message)}
+  return;
+ }
+ var btn=e.target.closest('[data-edit-target]');
+ if(btn)setEditorGroup(Number(btn.getAttribute('data-edit-target')));
+});
+function setEditorGroup(g){
+ if(!editing)return;
+ editing.g=Number(g);
+ var k=keyFor(editing.y,editing.m,editing.d,editing.g),v=changes[k]||{};
+ document.getElementById('editGroup').value=String(editing.g);
+ renderDateChanges();
+ document.getElementById('editTitle').textContent=editing.y+'년 '+editing.m+'월 '+editing.d+'일 · '+editing.g+'조 일정 수정';
+ document.getElementById('baseInfo').textContent='기본 배치: 주간 '+[1,2,3,4].find(x=>baseStatus(editing.y,editing.m,editing.d,x)==='주간')+'조 / 야간 '+[1,2,3,4].find(x=>baseStatus(editing.y,editing.m,editing.d,x)==='야간')+'조 · 선택한 '+editing.g+'조: '+baseStatus(editing.y,editing.m,editing.d,editing.g);
+ document.getElementById('editCover').value=v.cover||'';
+ document.getElementById('editLeave').value=v.leave||'';
+ document.getElementById('editLeaveText').value=v.leaveText||'';toggleOther();
+ document.getElementById('saveMsg').textContent='이 휴대폰의 개인 일정에만 저장됩니다.';
+ updateAccess();
+}
+function openEditor(d){
+ if(!approved){alert('관리자 승인 후 이용할 수 있습니다.');return}
+ editing={y:y,m:m,d:d,g:group};
+ var recorded=[];for(var eg=1;eg<=4;eg++){var ev=changes[keyFor(y,m,d,eg)];if(ev&&(ev.leave||ev.cover||ev.shift))recorded.push(eg)}
+ setEditorGroup(recorded.length===1?recorded[0]:group);
+ document.getElementById('editor').hidden=false;
+ document.getElementById('editor').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function toggleOther(){document.getElementById('otherLeave').hidden=document.getElementById('editLeave').value!=='기타'}
+document.getElementById('editLeave').addEventListener('change',toggleOther);
+document.getElementById('editGroup').addEventListener('change',function(){setEditorGroup(this.value)});
+grid.addEventListener('click',function(e){var el=e.target.closest('[data-date]');if(el)openEditor(Number(el.getAttribute('data-date')))});
+grid.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){var el=e.target.closest('[data-date]');if(el){e.preventDefault();openEditor(Number(el.getAttribute('data-date')))}}});
+document.getElementById('saveEdit').addEventListener('click',async function(){
+ if(!editing||!user||!ready)return;
+ var previous=changes[keyFor(editing.y,editing.m,editing.d,editing.g)]||{};
+ var v={shift:previous.shift||'',cover:document.getElementById('editCover').value,leave:document.getElementById('editLeave').value,leaveText:document.getElementById('editLeave').value==='기타'?document.getElementById('editLeaveText').value.trim():''};
+ var k=keyFor(editing.y,editing.m,editing.d,editing.g);
+ if(v.leave==='기타'&&!v.leaveText){document.getElementById('saveMsg').textContent='직접 입력 내용을 작성해 주세요.';return}
+ if(v.cover===String(editing.g)){document.getElementById('saveMsg').textContent='같은 조를 대직자로 지정할 수 없습니다.';return}
+ if(!confirm(editing.y+'년 '+editing.m+'월 '+editing.d+'일 · '+editing.g+'조\n대직: '+(v.cover?v.cover+'조':'없음')+' / 구분: '+(v.leave==='기타'?v.leaveText:v.leave||'없음')+'\n저장할까요?'))return;
+ try{await writeChangeWithAudit(k,v);document.getElementById('saveMsg').textContent='개인 일정 저장 완료';}
+ catch(err){document.getElementById('saveMsg').textContent='저장 실패: '+err.message}
+});
+document.getElementById('clearEdit').addEventListener('click',async function(){
+ if(!editing||!user||!ready)return;
+ var targetKey=keyFor(editing.y,editing.m,editing.d,editing.g);
+ if(!changes[targetKey]){document.getElementById('saveMsg').textContent=editing.g+'조에는 삭제할 변경 내역이 없습니다. 위 등록 내역에서 조를 선택하세요.';return}
+ if(!confirm(editing.g+'조 '+editing.m+'월 '+editing.d+'일 변경 내역을 삭제할까요?'))return;
+ try{await writeChangeWithAudit(keyFor(editing.y,editing.m,editing.d,editing.g),null,'delete');document.getElementById('editor').hidden=true}
+ catch(err){alert('삭제 실패: '+err.message)}
+});
+document.getElementById('closeEdit').addEventListener('click',function(){document.getElementById('editor').hidden=true});
+function download(name,content){
+ var a=document.createElement('a'),url=URL.createObjectURL(new Blob([content],{type:'application/json'}));
+ a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);
+}
+document.getElementById('exportData').addEventListener('click',function(){download('근무표_변경내역.json',JSON.stringify(changes,null,2))});
+document.getElementById('importData').addEventListener('click',function(){document.getElementById('importFile').click()});
+document.getElementById('importFile').addEventListener('change',function(e){
+ var file=e.target.files[0];if(!file)return;
+ var reader=new FileReader();reader.onload=function(){
+  try{
+   var data=JSON.parse(reader.result);
+   if(!data||Array.isArray(data)||typeof data!=='object')throw Error('형식 오류');
+   var cleaned={};
+   Object.keys(data).forEach(function(k){
+    if(!/^\d{4}-\d{2}-\d{2}\|[1-4]$/.test(k))return;
+    var v=data[k];if(!v||typeof v!=='object')return;
+    cleaned[k]={shift:['주간','야간','비번','휴무'].includes(v.shift)?v.shift:'',cover:['1','2','3','4'].includes(String(v.cover))?String(v.cover):'',leave:['연가','공가','교육','병가','특별휴가','기타'].includes(v.leave)?v.leave:'',leaveText:typeof v.leaveText==='string'?v.leaveText.slice(0,24):''};
+   });
+   if(!confirm('현재 변경내역을 백업 파일의 내용으로 교체할까요?'))return;
+   
+   changes=cleaned;if(persist()){render();if(editing)setEditorGroup(editing.g);alert('백업 복원이 완료되었습니다. 기존 개인 기록은 백업 내용으로 교체되었습니다.')}
+
+  }catch(err){alert('올바른 근무표 백업 파일이 아닙니다.')}
+ };
+ reader.readAsText(file);e.target.value='';
+});
+buttons.addEventListener('click',function(e){var g=e.target.getAttribute('data-group');if(g){group=Number(g);try{localStorage.setItem('lab_shift_view_group',String(group))}catch(err){}document.getElementById('editor').hidden=true;editing=null;render()}});
+document.getElementById('prev').addEventListener('click',function(){m--;if(m<1){m=12;y--}document.getElementById('editor').hidden=true;editing=null;render()});
+document.getElementById('next').addEventListener('click',function(){m++;if(m>12){m=1;y++}document.getElementById('editor').hidden=true;editing=null;render()});
+})();
+</script><script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){})})}</script></body></html>
