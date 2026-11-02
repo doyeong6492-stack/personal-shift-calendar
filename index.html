@@ -246,5 +246,7 @@ document.getElementById('importFile').addEventListener('change',function(e){
 buttons.addEventListener('click',function(e){var g=e.target.getAttribute('data-group');if(g){group=Number(g);try{localStorage.setItem('lab_shift_view_group',String(group))}catch(err){}document.getElementById('editor').hidden=true;editing=null;render()}});
 document.getElementById('prev').addEventListener('click',function(){m--;if(m<1){m=12;y--}document.getElementById('editor').hidden=true;editing=null;render()});
 document.getElementById('next').addEventListener('click',function(){m++;if(m>12){m=1;y++}document.getElementById('editor').hidden=true;editing=null;render()});
+// 첫 화면에서도 저장된 조를 적용해 다시 그립니다.
+render();
 })();
 </script><script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){})})}</script></body></html>
