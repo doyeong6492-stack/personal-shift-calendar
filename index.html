@@ -264,8 +264,9 @@ function download(name,content){
 var backupKey='personal_shift_calendar_last_backup_v1';
 function showLastBackup(){var v='';try{v=localStorage.getItem(backupKey)||''}catch(e){}document.getElementById('lastBackup').textContent='마지막 백업: '+(v||'기록 없음')}
 document.getElementById('exportData').addEventListener('click',function(){
- try{download('근무표_변경내역.json',JSON.stringify(changes,null,2));
- var dt=new Date(),stamp=dt.getFullYear()+'.'+String(dt.getMonth()+1).padStart(2,'0')+'.'+String(dt.getDate()).padStart(2,'0');
+ var dt=new Date(),datePart=dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'),timePart=String(dt.getHours()).padStart(2,'0')+String(dt.getMinutes()).padStart(2,'0');
+ try{download('교대근무_백업_'+datePart+'_'+timePart+'.json',JSON.stringify(changes,null,2));
+ var stamp=datePart.replace(/-/g,'.')+' '+timePart.slice(0,2)+':'+timePart.slice(2);
  localStorage.setItem(backupKey,stamp);showLastBackup();
  }catch(e){alert('백업 파일을 만들지 못했습니다: '+e.message)}
 });
