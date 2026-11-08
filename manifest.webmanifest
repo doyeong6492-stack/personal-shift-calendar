@@ -2,26 +2,26 @@
   "id": "/personal-shift-calendar/",
   "name": "개인용 교대근무표",
   "short_name": "개인 근무표",
-  "start_url": "/personal-shift-calendar/",
-  "scope": "/personal-shift-calendar/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "theme_color": "#38BDF8",
   "icons": [
     {
-      "src": "/personal-shift-calendar/icon-192.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/personal-shift-calendar/icon-512.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/personal-shift-calendar/icon.svg",
+      "src": "./icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
