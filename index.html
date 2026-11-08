@@ -139,6 +139,11 @@ h1{font-size:19px!important;line-height:1.25;margin:3px 0 7px!important}
 .toolbar .time-calc-btn{border:1px solid #a8c3e9;background:#edf5ff;color:#1e40af;border-radius:8px;white-space:nowrap;font-weight:700}
 @media(max-width:600px){.toolbar{gap:4px!important}.toolbar button{padding:6px 7px!important;font-size:clamp(11px,3.1vw,14px)!important}.toolbar #month{font-size:clamp(13px,4vw,17px)!important}.toolbar .time-calc-btn{padding:6px 7px!important}}
 </style><style>
+/* v22: two schedules on one date, with a compact secondary editor */
+.extra-editor{border-top:1px solid #dce4ee;margin-top:11px;padding-top:11px}
+.extra-editor label{display:block;margin-top:5px}
+#extraCustom[hidden]{display:none!important}
+.cell .status-extra{font-size:10px;font-weight:700;color:#2563eb;line-height:1.15;overflow-wrap:anywhere;margin-top:2px}
 /* v21 월간 계산 화면: 근무표와 같은 가로 폭, 수직 스크롤 최소화 */
 #calcArea[hidden]{display:none!important}
 #calcArea{width:100%;box-sizing:border-box;padding-top:3px}
@@ -164,7 +169,7 @@ h1{font-size:19px!important;line-height:1.25;margin:3px 0 7px!important}
 .calc-note{color:#64748b;font-size:11px;line-height:1.55;margin:9px 0 2px}
 .calc-warning{color:#9a3412;background:#fff7ed;border-radius:8px;padding:8px;font-size:12px;line-height:1.5;margin-top:8px}
 @media(max-width:380px){.calc-rate-row{grid-template-columns:minmax(0,.7fr) minmax(86px,.98fr) minmax(100px,1.1fr);gap:4px}.calc-rate-row input{font-size:14px}.calc-rate-row output{font-size:12px}.calc-count small{font-size:10px}}
-</style></head><body><main class="wrap"><h1><span class="title-icon">📅</span> 교대근무 스케줄표</h1><div class="personal-bar">🔒 개인용 · 이 기기에만 저장 <span id="syncState">저장 준비 완료</span></div><div id="calendarArea"><div class="toolbar"><button type="button" id="prev">‹ 이전</button><strong id="month">2026년 11월</strong><button type="button" id="timeCalc" class="time-calc-btn" title="선택한 월의 근무시간 및 예상 수당">시간 계산</button><button type="button" id="next">다음 ›</button></div><p class="hint" style="font-size:12px;color:#64748b;margin:0 0 7px">조 선택 · 상단은 기본 편성, 하단은 내 근무</p><div class="groups" id="groups"><button type="button" data-group="1" class="">1조</button><button type="button" data-group="2" class="">2조</button><button type="button" data-group="3" class="">3조</button><button type="button" data-group="4" class="on">4조</button></div><div class="week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div><div class="grid" id="grid"><div class="cell working sun"><div class="date">1</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">2</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">3</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">4</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">5</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">6</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell sat"><div class="date">7</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell sun"><div class="date">8</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">9</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">10</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">11</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">12</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">13</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working sat"><div class="date">14</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell sun"><div class="date">15</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">16</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">17</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">18</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">19</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">20</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working sat"><div class="date">21</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working sun"><div class="date">22</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">23</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">24</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">25</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">26</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">27</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell sat"><div class="date">28</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working sun"><div class="date">29</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">30</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div></div><section class="editor" id="editor" hidden><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="editTitle"><button type="button" id="closeX" aria-label="닫기">×</button><h2 id="editTitle">근무 변경</h2><p class="hint" id="baseInfo"></p><label for="editShift">근무 변경</label><select id="editShift"><option value="">기본 근무 유지</option><option value="주간">주간</option><option value="야간">야간</option><option value="비번">비번</option><option value="휴무">휴무</option><option value="직접입력">직접 입력 (연가·공가·교육 등)</option></select><div id="otherShift" hidden><label for="editShiftText">일정 내용 (최대 24자)</label><input id="editShiftText" type="text" maxlength="24" placeholder="예: 연가, 공가, 교육, 출장"><label for="editHours">시간 선택</label><select id="editHours"><option value="4">4시간 (주간 1일로 표기)</option><option value="8" selected>8시간 (주간 1일)</option><option value="15">15시간 (야간 1일)</option><option value="15leave">15시간 (야간 연가)</option></select><p class="hint">선택한 시간은 월간 집계에 반영됩니다. 15시간 야간 연가는 야간수당 계산에서 제외합니다.</p></div><label for="editMemo">메모 (근무 변경과 별도로 저장)</label><textarea id="editMemo" maxlength="500" rows="3" placeholder="날짜별 메모를 입력하세요"></textarea><div class="actions"><button type="button" class="primary" id="saveEdit">저장</button><button type="button" class="secondary" id="clearEdit">변경 삭제</button><button type="button" id="closeEdit">닫기</button></div><p class="hint" id="saveMsg" aria-live="polite"></p></div></section><p class="hint" id="lastBackup" style="font-size:12px;margin:10px 0 0;color:#64748b">마지막 백업: 기록 없음</p><div class="backup"><button type="button" id="exportData">변경내역 백업</button><button type="button" id="importData">백업 불러오기</button><input type="file" id="importFile" accept=".json,application/json" hidden></div><p class="notice">날짜를 눌러 근무를 변경할 수 있습니다. 연가·공가·교육·출장 등은 직접 입력하고 4·8·15시간 중 선택하세요. 시간 선택은 자동 집계에 반영됩니다. 변경 삭제 시 메모는 유지합니다. 저장 정보는 이 기기에서만 보관됩니다.</p><div class="notice" id="holidayNotice"></div><div class="legend">노란색 = 일반 근무 · 연붉은색 = 대직 · 연민트색 = 직접 입력 · 흰색 = 비번·휴무 · 파란 테두리 = 오늘 · 빨간 날짜 = 일요일·공휴일<br>기준: 2026년 11월 1일 주간 4조 / 야간 3조</div></div><section id="calcArea" hidden aria-label="월간 시간 계산기">
+</style></head><body><main class="wrap"><h1><span class="title-icon">📅</span> 교대근무 스케줄표</h1><div class="personal-bar">🔒 개인용 · 이 기기에만 저장 <span id="syncState">저장 준비 완료</span></div><div id="calendarArea"><div class="toolbar"><button type="button" id="prev">‹ 이전</button><strong id="month">2026년 11월</strong><button type="button" id="timeCalc" class="time-calc-btn" title="선택한 월의 근무시간 및 예상 수당">시간 계산</button><button type="button" id="next">다음 ›</button></div><p class="hint" style="font-size:12px;color:#64748b;margin:0 0 7px">조 선택 · 상단은 기본 편성, 하단은 내 근무</p><div class="groups" id="groups"><button type="button" data-group="1" class="">1조</button><button type="button" data-group="2" class="">2조</button><button type="button" data-group="3" class="">3조</button><button type="button" data-group="4" class="on">4조</button></div><div class="week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div><div class="grid" id="grid"><div class="cell working sun"><div class="date">1</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">2</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">3</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">4</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">5</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">6</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell sat"><div class="date">7</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell sun"><div class="date">8</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">9</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">10</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">11</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">12</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">13</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working sat"><div class="date">14</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell sun"><div class="date">15</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">16</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">17</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">18</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">19</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">20</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working sat"><div class="date">21</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working sun"><div class="date">22</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">23</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell"><div class="date">24</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working"><div class="date">25</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">26</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div><div class="cell"><div class="date">27</div><div class="shift">주 2조</div><div class="shift">야 1조</div><div class="status">비번</div></div><div class="cell sat"><div class="date">28</div><div class="shift">주 3조</div><div class="shift">야 2조</div><div class="status">휴무</div></div><div class="cell working sun"><div class="date">29</div><div class="shift mine">주 4조</div><div class="shift">야 3조</div><div class="status">주간</div></div><div class="cell working"><div class="date">30</div><div class="shift">주 1조</div><div class="shift mine">야 4조</div><div class="status">야간</div></div></div><section class="editor" id="editor" hidden><div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="editTitle"><button type="button" id="closeX" aria-label="닫기">×</button><h2 id="editTitle">근무 변경</h2><p class="hint" id="baseInfo"></p><label for="editShift">근무 변경</label><select id="editShift"><option value="">기본 근무 유지</option><option value="주간">주간</option><option value="야간">야간</option><option value="비번">비번</option><option value="휴무">휴무</option><option value="직접입력">직접 입력 (연가·공가·교육 등)</option></select><div id="otherShift" hidden><label for="editShiftText">일정 내용 (최대 24자)</label><input id="editShiftText" type="text" maxlength="24" placeholder="예: 연가, 공가, 교육, 출장"><label for="editHours">시간 선택</label><select id="editHours"><option value="4">4시간 (주간 1일로 표기)</option><option value="8" selected>8시간 (주간 1일)</option><option value="15">15시간 (야간 1일)</option><option value="15leave">15시간 (야간 연가)</option></select><p class="hint">선택한 시간은 월간 집계에 반영됩니다. 15시간 야간 연가는 야간수당 계산에서 제외합니다.</p></div><div class="extra-editor"><label for="extraShift">추가 일정 (같은 날 두 가지 일정이 있을 때)</label><select id="extraShift"><option value="">추가 일정 없음</option><option value="주간">주간근무 추가</option><option value="야간">야간근무 추가</option><option value="직접입력">직접 입력 추가 (교육·출장 등)</option></select><div id="extraCustom" hidden><label for="extraText">추가 일정 내용</label><input id="extraText" type="text" maxlength="24" placeholder="예: 교육, 공가, 출장"><label for="extraHours">추가 일정 시간</label><select id="extraHours"><option value="4">4시간 (주간 1일로 표기)</option><option value="8" selected>8시간 (주간 1일)</option><option value="15">15시간 (야간 1일)</option><option value="15leave">15시간 (야간 연가)</option></select></div><p class="hint">예: 28일 교육 8시간 + 야간근무라면 첫 일정은 교육 8시간, 추가 일정은 야간근무로 선택하세요.</p></div><label for="editMemo">메모 (근무 변경과 별도로 저장)</label><textarea id="editMemo" maxlength="500" rows="3" placeholder="날짜별 메모를 입력하세요"></textarea><div class="actions"><button type="button" class="primary" id="saveEdit">저장</button><button type="button" class="secondary" id="clearEdit">변경 삭제</button><button type="button" id="closeEdit">닫기</button></div><p class="hint" id="saveMsg" aria-live="polite"></p></div></section><p class="hint" id="lastBackup" style="font-size:12px;margin:10px 0 0;color:#64748b">마지막 백업: 기록 없음</p><div class="backup"><button type="button" id="exportData">변경내역 백업</button><button type="button" id="importData">백업 불러오기</button><input type="file" id="importFile" accept=".json,application/json" hidden></div><p class="notice">날짜를 눌러 근무를 변경할 수 있습니다. 같은 날짜에 교육과 야간근무가 있으면 추가 일정을 선택하세요. 연가·공가·교육·출장 등은 직접 입력하고 4·8·15시간 중 선택하세요. 시간 선택은 자동 집계에 반영됩니다. 변경 삭제 시 메모는 유지합니다. 저장 정보는 이 기기에서만 보관됩니다.</p><div class="notice" id="holidayNotice"></div><div class="legend">노란색 = 일반 근무 · 연붉은색 = 대직 · 연민트색 = 직접 입력 · 흰색 = 비번·휴무 · 파란 테두리 = 오늘 · 빨간 날짜 = 일요일·공휴일<br>기준: 2026년 11월 1일 주간 4조 / 야간 3조</div></div><section id="calcArea" hidden aria-label="월간 시간 계산기">
  <div class="calc-toolbar"><button type="button" id="calcBack">‹ 근무표</button><strong id="calcMonth">월간 시간 계산</strong></div>
  <div class="calc-section calc-summary"><h2 id="calcGroup">3조 · 근무시간</h2><div class="calc-rows"><span>법정근무시간</span><span class="number" id="calcLegal">—</span><span>집계 근무시간</span><span class="number" id="calcWorked">—</span><span class="calc-main">시간외근무</span><span class="calc-main number em" id="calcOver">—</span></div></div>
  <div class="calc-section"><h2>근무일수 · 자동 집계</h2><div class="calc-counts"><div class="calc-count"><small>평일 주간</small><strong id="calcWeek">—</strong></div><div class="calc-count"><small>휴일 주간</small><strong id="calcHoliday">—</strong></div><div class="calc-count"><small>전체 야간</small><strong id="calcNight">—</strong></div></div><p class="calc-note" id="calcCountsNote"></p></div>
@@ -191,12 +196,18 @@ var user={displayName:'나'},ready=true,approved=true;
 var syncState=document.getElementById('syncState');
 function setSync(t){syncState.textContent=t}
 function updateAccess(){}
-function validate(v){return {memo:typeof v.memo==='string'?v.memo.slice(0,500):'',shift:['주간','야간','비번','휴무','출장','교육','직접입력','대직주간','대직야간'].includes(v.shift)?v.shift:'',cover:['1','2','3','4','주간','야간'].includes(String(v.cover))?String(v.cover):'',leave:['연가','공가','출장','교육','병가','특별휴가','기타'].includes(v.leave)?v.leave:'',leaveText:typeof v.leaveText==='string'?v.leaveText.slice(0,24):'',shiftText:typeof v.shiftText==='string'?v.shiftText.slice(0,24):'',hours:[4,8,15].includes(Number(v.hours))?Number(v.hours):null,calcKind:v.calcKind==='night-leave'?'night-leave':''}}
+function normalizeExtra(x){
+ if(!x||typeof x!=='object')return null;
+ var mode=['주간','야간','직접입력'].includes(x.shift)?x.shift:'';
+ if(!mode)return null;
+ return {shift:mode,shiftText:typeof x.shiftText==='string'?x.shiftText.slice(0,24):'',hours:[4,8,15].includes(Number(x.hours))?Number(x.hours):null,calcKind:x.calcKind==='night-leave'?'night-leave':''};
+}
+function validate(v){return {extra:normalizeExtra(v.extra),memo:typeof v.memo==='string'?v.memo.slice(0,500):'',shift:['주간','야간','비번','휴무','출장','교육','직접입력','대직주간','대직야간'].includes(v.shift)?v.shift:'',cover:['1','2','3','4','주간','야간'].includes(String(v.cover))?String(v.cover):'',leave:['연가','공가','출장','교육','병가','특별휴가','기타'].includes(v.leave)?v.leave:'',leaveText:typeof v.leaveText==='string'?v.leaveText.slice(0,24):'',shiftText:typeof v.shiftText==='string'?v.shiftText.slice(0,24):'',hours:[4,8,15].includes(Number(v.hours))?Number(v.hours):null,calcKind:v.calcKind==='night-leave'?'night-leave':''}}
 function persist(){try{localStorage.setItem(storeKey,JSON.stringify(changes));setSync('이 기기에 저장됨');return true}catch(e){setSync('저장 실패 · 저장 공간 확인');alert('기기 저장에 실패했습니다: '+e.message);return false}}
 try{var saved=JSON.parse(localStorage.getItem(storeKey)||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved)){Object.keys(saved).forEach(function(k){if(/^\d{4}-\d{2}-\d{2}\|[1-4]$/.test(k)&&saved[k]&&typeof saved[k]==='object')changes[k]=validate(saved[k])})}}catch(e){setSync('저장 데이터 읽기 실패 · 백업 확인 필요')}
 async function writeChangeWithAudit(k,v){
  if(!/^\d{4}-\d{2}-\d{2}\|[1-4]$/.test(k))throw Error('날짜 오류');
- var old=changes[k];if(v&&(v.shift||v.cover||v.leave||v.memo))changes[k]=validate(v);else delete changes[k];
+ var old=changes[k];if(v&&(v.shift||v.cover||v.leave||v.memo||v.extra))changes[k]=validate(v);else delete changes[k];
  if(!persist()){if(old)changes[k]=old;else delete changes[k];throw Error('저장 실패')}
  render();renderDateChanges();
 }
@@ -245,9 +256,12 @@ function render(){
   var working=isCover||change.leave==='출장'||change.leave==='교육'||(!change.leave&&!change.cover&&status!=='비번'&&status!=='휴무');
   var key=String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
   var holiday=holidays[y]&&holidays[y][key]?holidays[y][key]:'';
-  var tags=(change.shift==='직접입력'&&[4,8,15].includes(change.hours)?'<div class="time-tag">'+change.hours+'시간</div>':'')+(change.memo?'<div class="memo-indicator" title="메모 있음">📝</div>':'');
+  var extra=normalizeExtra(change.extra);
+  var extraStatus=extra?(extra.shift==='직접입력'?(extra.shiftText||'직접 입력'):extra.shift):'';
+  var extraTag=extra&&extra.shift==='직접입력'&&[4,8,15].includes(extra.hours)?extra.hours+'시간':'';
+  var tags=(change.shift==='직접입력'&&[4,8,15].includes(change.hours)?'<div class="time-tag">'+change.hours+'시간</div>':'')+(extraTag?'<div class="time-tag">추가 '+extraTag+'</div>':'')+(change.memo?'<div class="memo-indicator" title="메모 있음">📝</div>':'');
   // 하단에 실제 일정만 한 번 표시해 중복 태그를 방지합니다.
-  out+='<div tabindex="0" role="button" aria-label="'+d+'일 근무 수정" data-date="'+d+'" class="cell'+(working?' working':'')+(change.shift||change.cover||change.leave||change.memo?' changed':'')+(wd===0?' sun':wd===6?' sat':'') +(isCover?' covering':'')+(new Date().getFullYear()===y&&new Date().getMonth()+1===m&&new Date().getDate()===d?' is-today':'')+(change.shift==='직접입력'&&!change.cover&&!change.leave?' custom-shift':'')+'"><div class="date'+(holiday?' holiday-date':'')+'">'+d+'</div>'+(holiday?'<div class="holiday">'+safe(holiday)+'</div>':'')+'<div class="shift'+(group===day?' mine':'')+'">☀️ 주간 '+day+'조</div><div class="shift'+(group===night?' mine':'')+'">🌙 야간 '+night+'조</div><div class="status">'+safe(status)+'</div>'+tags+'</div>';
+  out+='<div tabindex="0" role="button" aria-label="'+d+'일 근무 수정" data-date="'+d+'" class="cell'+((working||extraStatus==='주간'||extraStatus==='야간'||extraStatus)?' working':'')+(change.shift||change.cover||change.leave||change.memo||extra?' changed':'')+(wd===0?' sun':wd===6?' sat':'') +(isCover?' covering':'')+(new Date().getFullYear()===y&&new Date().getMonth()+1===m&&new Date().getDate()===d?' is-today':'')+(change.shift==='직접입력'&&!change.cover&&!change.leave?' custom-shift':'')+'"><div class="date'+(holiday?' holiday-date':'')+'">'+d+'</div>'+(holiday?'<div class="holiday">'+safe(holiday)+'</div>':'')+'<div class="shift'+(group===day?' mine':'')+'">☀️ 주간 '+day+'조</div><div class="shift'+(group===night?' mine':'')+'">🌙 야간 '+night+'조</div><div class="status">'+safe(status)+'</div>'+(extraStatus?'<div class="status-extra">+ '+safe(extraStatus)+'</div>':'')+tags+'</div>';
  }
  var trailing=(7-((first+count)%7))%7;
  for(var i=1;i<=trailing;i++)out+=adjacentCell(count+i);
@@ -271,6 +285,11 @@ function setEditorGroup(g){
  document.getElementById('editShiftText').value=custom;
  document.getElementById('editHours').value=(v.calcKind==='night-leave'?'15leave':String([4,8,15].includes(Number(hour))?Number(hour):8));
  toggleShift();
+ var ex=normalizeExtra(v.extra);
+ document.getElementById('extraShift').value=ex?ex.shift:'';
+ document.getElementById('extraText').value=ex?ex.shiftText:'';
+ document.getElementById('extraHours').value=ex?(ex.calcKind==='night-leave'?'15leave':String(ex.hours||8)):'8';
+ toggleExtra();
  document.getElementById('editMemo').value=v.memo||'';
  document.getElementById('saveMsg').textContent='이 휴대폰의 개인 일정에만 저장됩니다.';
  updateAccess();
@@ -285,6 +304,8 @@ function openEditor(d){
 }
 function toggleShift(){document.getElementById('otherShift').hidden=document.getElementById('editShift').value!=='직접입력'}
 document.getElementById('editShift').addEventListener('change',toggleShift);
+function toggleExtra(){document.getElementById('extraCustom').hidden=document.getElementById('extraShift').value!=='직접입력'}
+document.getElementById('extraShift').addEventListener('change',toggleExtra);
 grid.addEventListener('click',function(e){var el=e.target.closest('[data-date]');if(el)openEditor(Number(el.getAttribute('data-date')))});
 grid.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){var el=e.target.closest('[data-date]');if(el){e.preventDefault();openEditor(Number(el.getAttribute('data-date')))}}});
 document.getElementById('saveEdit').addEventListener('click',async function(){
@@ -292,7 +313,11 @@ document.getElementById('saveEdit').addEventListener('click',async function(){
  var previous=changes[keyFor(editing.y,editing.m,editing.d,editing.g)]||{};
  var mode=document.getElementById('editShift').value;
  var v={shift:mode,shiftText:mode==='직접입력'?document.getElementById('editShiftText').value.trim():'',hours:mode==='직접입력'?(document.getElementById('editHours').value==='15leave'?15:Number(document.getElementById('editHours').value)):null,calcKind:mode==='직접입력'&&document.getElementById('editHours').value==='15leave'?'night-leave':'',memo:document.getElementById('editMemo').value.trim(),cover:'',leave:'',leaveText:''};
+ var exMode=document.getElementById('extraShift').value;
+ var exHours=document.getElementById('extraHours').value;
+ v.extra=exMode?{shift:exMode,shiftText:exMode==='직접입력'?document.getElementById('extraText').value.trim():'',hours:exMode==='직접입력'?(exHours==='15leave'?15:Number(exHours)):exMode==='야간'?15:8,calcKind:exMode==='직접입력'&&exHours==='15leave'?'night-leave':''}:null;
  var k=keyFor(editing.y,editing.m,editing.d,editing.g);
+ if(v.extra&&v.extra.shift==='직접입력'&&!v.extra.shiftText){document.getElementById('saveMsg').textContent='추가 일정 내용을 입력해 주세요.';return}
  if(v.shift==='직접입력'&&!v.shiftText){document.getElementById('saveMsg').textContent='일정 내용을 입력해 주세요.';return}
 
  try{await writeChangeWithAudit(k,v);closeEditor();}
@@ -301,9 +326,9 @@ document.getElementById('saveEdit').addEventListener('click',async function(){
 document.getElementById('clearEdit').addEventListener('click',async function(){
  if(!editing||!user||!ready)return;
  var targetKey=keyFor(editing.y,editing.m,editing.d,editing.g);
- if(!changes[targetKey]||!(changes[targetKey].shift||changes[targetKey].cover||changes[targetKey].leave)){document.getElementById('saveMsg').textContent='삭제할 근무 변경이 없습니다. 메모는 별도로 관리됩니다.';return}
+ if(!changes[targetKey]||!(changes[targetKey].shift||changes[targetKey].cover||changes[targetKey].leave||changes[targetKey].extra)){document.getElementById('saveMsg').textContent='삭제할 근무 변경이 없습니다. 메모는 별도로 관리됩니다.';return}
  if(!confirm(editing.g+'조 '+editing.m+'월 '+editing.d+'일 변경 내역을 삭제할까요?'))return;
- try{await writeChangeWithAudit(targetKey,{memo:(changes[targetKey]||{}).memo||'',shift:'',shiftText:'',cover:'',leave:'',leaveText:'',hours:null});closeEditor()}
+ try{await writeChangeWithAudit(targetKey,{memo:(changes[targetKey]||{}).memo||'',shift:'',shiftText:'',cover:'',leave:'',leaveText:'',hours:null,extra:null});closeEditor()}
  catch(err){alert('삭제 실패: '+err.message)}
 });
 document.getElementById('closeEdit').addEventListener('click',closeEditor);
@@ -334,7 +359,7 @@ document.getElementById('importFile').addEventListener('change',function(e){
    Object.keys(data).forEach(function(k){
     if(!/^\d{4}-\d{2}-\d{2}\|[1-4]$/.test(k))return;
     var v=data[k];if(!v||typeof v!=='object')return;
-    cleaned[k]={memo:typeof v.memo==='string'?v.memo.slice(0,500):'',shift:['주간','야간','비번','휴무','출장','교육','직접입력','대직주간','대직야간'].includes(v.shift)?v.shift:'',cover:['1','2','3','4','주간','야간'].includes(String(v.cover))?String(v.cover):'',leave:['연가','공가','출장','교육','병가','특별휴가','기타'].includes(v.leave)?v.leave:'',leaveText:typeof v.leaveText==='string'?v.leaveText.slice(0,24):'',shiftText:typeof v.shiftText==='string'?v.shiftText.slice(0,24):'',hours:[4,8,15].includes(Number(v.hours))?Number(v.hours):null,calcKind:v.calcKind==='night-leave'?'night-leave':''};
+    cleaned[k]={memo:typeof v.memo==='string'?v.memo.slice(0,500):'',shift:['주간','야간','비번','휴무','출장','교육','직접입력','대직주간','대직야간'].includes(v.shift)?v.shift:'',cover:['1','2','3','4','주간','야간'].includes(String(v.cover))?String(v.cover):'',leave:['연가','공가','출장','교육','병가','특별휴가','기타'].includes(v.leave)?v.leave:'',leaveText:typeof v.leaveText==='string'?v.leaveText.slice(0,24):'',shiftText:typeof v.shiftText==='string'?v.shiftText.slice(0,24):'',hours:[4,8,15].includes(Number(v.hours))?Number(v.hours):null,calcKind:v.calcKind==='night-leave'?'night-leave':'',extra:normalizeExtra(v.extra)};
    });
    if(!confirm('현재 변경내역을 백업 파일의 내용으로 교체할까요?'))return;
    
@@ -387,19 +412,36 @@ function calcMonthData(){
  for(var d=1;d<=days;d++){
   var dt=new Date(Date.UTC(y,m-1,d)),dow=dt.getUTCDay(),key=String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0'),isHoliday=dow===0||dow===6||!!(holidays[y]&&holidays[y][key]);
   if(!isHoliday)legalDays++;
-  var v=changes[keyFor(y,m,d,group)]||{},base=baseStatus(y,m,d,group),st=v.shift||base,work=true,kind='';
-  if(v.leave){st='직접입력';kind=v.leave==='기타'?v.leaveText:v.leave;work=false}
-  else if(v.cover){st=v.cover==='야간'?'야간':'주간';kind='대직';}
-  else if(v.shift==='대직야간'){st='야간';kind='대직'}
-  else if(v.shift==='대직주간'){st='주간';kind='대직'}
-  else if(st==='직접입력'||st==='출장'||st==='교육'){
-   var name=v.shiftText||st;kind=name;work=!isNonWorkCustom(name);
-   st=Number(v.hours)===15?'야간':'주간';
-   if(![4,8,15].includes(Number(v.hours)))notes.push(d+'일: 직접 입력 시간 미지정');
+  var v=changes[keyFor(y,m,d,group)]||{};
+  function tally(mode,work){
+   if(mode==='주간'){
+    if(isHoliday){holiday++;if(work)paidHoliday++}else week++;
+   }else if(mode==='야간'){
+    night++;if(work)paidNight++;
+   }
   }
-  if(v.calcKind==='night-leave')work=false;
-  if(st==='주간'){if(isHoliday){holiday++;if(work)paidHoliday++}else week++}
-  else if(st==='야간'){night++;if(work)paidNight++}
+  function resolved(v,base,isExtra){
+   var st=v.shift||base,work=true;
+   if(!isExtra&&v.leave){st='직접입력';work=false;}
+   else if(!isExtra&&v.cover)st=v.cover==='야간'?'야간':'주간';
+   else if(st==='대직야간')st='야간';
+   else if(st==='대직주간')st='주간';
+   if(st==='직접입력'||st==='출장'||st==='교육'){
+    var name=(!isExtra&&v.leave)?(v.leave==='기타'?v.leaveText:v.leave):(v.shiftText||st);
+    work=work&&!isNonWorkCustom(name);
+    st=Number(v.hours)===15?'야간':'주간';
+    if(![4,8,15].includes(Number(v.hours)))notes.push(d+'일: '+(isExtra?'추가 ':'')+'직접 입력 시간 미지정');
+   }
+   if(v.calcKind==='night-leave')work=false;
+   return {status:st,work:work};
+  }
+  var main=resolved(v,baseStatus(y,m,d,group),false);
+  tally(main.status,main.work);
+  var extra=normalizeExtra(v.extra);
+  if(extra){
+   var other=resolved(extra,'',true);
+   tally(other.status,other.work);
+  }
  }
  var total=week*9+holiday+night*15,legal=legalDays*8,delta=total-legal;
  return {week:week,holiday:holiday,night:night,paidNight:paidNight,paidHoliday:paidHoliday,legal:legal,total:total,delta:delta,over:Math.max(0,delta),notes:notes};
@@ -461,4 +503,4 @@ grid.addEventListener('touchend',function(e){
 showLastBackup();
 render();
 })();
-</script><script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js?v=21').catch(function(){})})}</script></body></html>
+</script><script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js?v=22').catch(function(){})})}</script></body></html>
