@@ -272,8 +272,8 @@ button{border-color:#D4DEE3;background:#fff;color:#25333C}
 #editor .custom-select-trigger{display:flex;width:100%;min-height:45px;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #94a3b8;border-radius:9px;background:#fff;color:#243d43;font-size:16px;font-weight:550;text-align:left}
 #editor .custom-select-trigger:after{content:'⌄';font-size:20px;color:#64748b;line-height:1}
 #choiceOverlay[hidden]{display:none!important}
-#choiceOverlay{position:fixed;inset:0;z-index:2000;display:flex;align-items:flex-end;justify-content:center;background:rgba(15,23,42,.45);padding:0}
-#choiceOverlay .choice-sheet{width:min(100%,460px);max-height:min(80dvh,650px);overflow:hidden;background:#fff;border-radius:19px 19px 0 0;box-shadow:0 -12px 35px rgba(0,0,0,.18);display:flex;flex-direction:column;padding:15px 14px max(16px,env(safe-area-inset-bottom))}
+#choiceOverlay{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;background:rgba(15,23,42,.45);padding:16px}
+#choiceOverlay .choice-sheet{width:min(100%,460px);max-height:min(78dvh,650px);overflow:hidden;background:#fff;border-radius:19px;box-shadow:0 12px 35px rgba(0,0,0,.18);display:flex;flex-direction:column;padding:15px 14px 16px}
 #choiceOverlay .choice-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
 #choiceOverlay .choice-head strong{font-size:17px;color:#243d43}
 #choiceOverlay .choice-close{border:1px solid #d4e3e7;border-radius:10px;background:#f2f7f8;color:#30525a;padding:9px 15px;font-size:14px;font-weight:750;min-width:65px}
@@ -779,8 +779,8 @@ grid.addEventListener('touchend',function(e){
 showLastBackup();
 render();
 })();
-</script><script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js?v=30').catch(function(){})})}</script><script>
-// v30: 기본 <select>의 삼성 브라우저 이전/다음 버튼 대신 간단한 자체 선택창.
+</script><script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js?v=31').catch(function(){})})}</script><script>
+// v31: 기본 <select>의 삼성 브라우저 이전/다음 버튼 대신 간단한 자체 선택창.
 (function(){
  var overlay=document.getElementById('choiceOverlay'), options=document.getElementById('choiceOptions'),title=document.getElementById('choiceTitle'), active=null, trigger=null;
  var fields=[['editShift','근무 변경'],['creditType','인정시간'],['creditHours','인정시간']];
