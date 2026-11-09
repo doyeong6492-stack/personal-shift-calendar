@@ -258,9 +258,9 @@ button{border-color:#D4DEE3;background:#fff;color:#25333C}
  <div class="calc-section calc-summary"><h2 id="calcGroup">3조 · 근무시간</h2><div class="calc-rows"><span>법정근무시간</span><span class="number" id="calcLegal">—</span><span>집계 근무시간</span><span class="number" id="calcWorked">—</span><span class="calc-main">시간외근무</span><span class="calc-main number em" id="calcOver">—</span></div></div>
  <div class="calc-section"><h2>근무일수 · 자동 집계</h2><div class="calc-counts"><div class="calc-count"><small>평일 주간</small><strong id="calcWeek">—</strong></div><div class="calc-count"><small>휴일 주간</small><strong id="calcHoliday">—</strong></div><div class="calc-count"><small>전체 야간</small><strong id="calcNight">—</strong></div></div><p class="calc-note" id="calcCountsNote"></p></div>
  <div class="calc-section"><h2>수당 단가 · 원 단위 직접 입력</h2>
-  <div class="calc-rate-row"><label for="rateOver">시간외<br>(원/시간)</label><input id="rateOver" type="number" min="0" step="1" inputmode="numeric" placeholder="0"><output id="payOver">—</output></div>
-  <div class="calc-rate-row"><label for="rateNight">야간<br>(원/일)</label><input id="rateNight" type="number" min="0" step="1" inputmode="numeric" placeholder="0"><output id="payNight">—</output></div>
-  <div class="calc-rate-row"><label for="rateHoliday">휴일<br>(원/일)</label><input id="rateHoliday" type="number" min="0" step="1" inputmode="numeric" placeholder="0"><output id="payHoliday">—</output></div>
+  <div class="calc-rate-row"><label for="rateOver">시간외<br>(원/시간)</label><input id="rateOver" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><output id="payOver">—</output></div>
+  <div class="calc-rate-row"><label for="rateNight">야간<br>(원/일)</label><input id="rateNight" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><output id="payNight">—</output></div>
+  <div class="calc-rate-row"><label for="rateHoliday">휴일<br>(원/일)</label><input id="rateHoliday" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><output id="payHoliday">—</output></div>
   <div class="calc-rows calc-total"><span>예상 수당 합계</span><span class="number em" id="calcPayTotal">—</span></div>
   <div class="calc-save-line"><button id="saveCalcRates" type="button">단가 저장</button><span id="calcRateHint" role="status" aria-live="polite">단가를 수정한 뒤 저장해 주세요.</span></div><p class="calc-note">저장한 단가는 해당 월부터 이후 월로 적용되며, 이전 월 값은 유지됩니다.</p>
   <div id="calcWarn" class="calc-warning" hidden></div>
@@ -667,6 +667,9 @@ function anyRateChanges(){
 }
 ['Over','Night','Holiday'].forEach(function(k){
  var el=document.getElementById('rate'+k);
+ // 모바일 숫자 입력칸은 기존 단가를 탭하면 전체 선택해 즉시 덮어쓸 수 있게 함.
+ el.addEventListener('focus',function(){this.select()});
+ el.addEventListener('click',function(){this.select()});
  el.addEventListener('input',function(){rateDirty=anyRateChanges();setRateMessage(rateDirty?'저장 전 · 단가 저장을 눌러주세요.':'저장된 단가',!rateDirty);displayCalcPay()});
 });
 document.getElementById('saveCalcRates').addEventListener('click',function(){
