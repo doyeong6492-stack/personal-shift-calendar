@@ -285,12 +285,12 @@ button{border-color:#D4DEE3;background:#fff;color:#25333C}
  <p class="calc-info-note">※ 법정시간과 근무 인정시간을 기준으로 산정한 예상 수당입니다. 실제 근무시간·지급액과 다를 수 있으니 확인해 주세요.</p>
  <div class="calc-section calc-summary"><h2 id="calcGroup">3조 · 근무시간</h2><div class="calc-rows"><span>기본 법정시간</span><span class="number" id="calcBaseLegal">—</span><span>인정시간</span><span class="number" id="calcCredit">—</span><span class="calc-main">조정 법정시간</span><span class="calc-main number em" id="calcLegal">—</span><span>집계 근무시간</span><span class="number" id="calcWorked">—</span><span class="calc-main">시간외근무</span><span class="calc-main number em" id="calcOver">—</span></div></div>
  <div class="calc-section"><h2>근무일수 · 자동 집계</h2><div class="calc-counts"><div class="calc-count"><small>평일 주간</small><strong id="calcWeek">—</strong></div><div class="calc-count"><small>휴일 주간</small><strong id="calcHoliday">—</strong></div><div class="calc-count"><small>전체 야간</small><strong id="calcNight">—</strong></div></div><p class="calc-note" id="calcCountsNote"></p></div>
- <div class="calc-section"><h2>수당 단가 · 원 단위 직접 입력</h2>
+ <div class="calc-section"><h2>조별 수당 단가 · 원 단위 직접 입력</h2>
   <div class="calc-rate-row"><label for="rateOver">시간외<br>(원/시간)</label><input id="rateOver" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><output id="payOver">—</output></div>
   <div class="calc-rate-row"><label for="rateNight">야간<br>(원/일)</label><input id="rateNight" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><output id="payNight">—</output></div>
   <div class="calc-rate-row"><label for="rateHoliday">휴일<br>(원/일)</label><input id="rateHoliday" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0"><output id="payHoliday">—</output></div>
   <div class="calc-rows calc-total"><span>예상 수당 합계</span><span class="number em" id="calcPayTotal">—</span></div>
-  <div class="calc-save-line"><button id="saveCalcRates" type="button">단가 저장</button><span id="calcRateHint" role="status" aria-live="polite">단가를 수정한 뒤 저장해 주세요.</span></div><p class="calc-note">저장한 단가는 해당 월부터 이후 월로 적용되며, 이전 월 값은 유지됩니다.</p>
+  <div class="calc-save-line"><button id="saveCalcRates" type="button">단가 저장</button><span id="calcRateHint" role="status" aria-live="polite">단가를 수정한 뒤 저장해 주세요.</span></div><p class="calc-note">저장한 단가는 선택한 조에만 적용되며, 해당 월부터 이후 월로 이어집니다. 기존 공통 단가는 3조로 이전했습니다.</p>
   <div id="calcWarn" class="calc-warning" hidden></div>
   <p class="calc-note">휴일수당은 엑셀 사례대로 총액의 10원 미만을 버립니다. 시간외수당의 절사 규칙·실제 지급 요건은 별도 확인이 필요하며, 표시액은 예상치입니다. 봉급 등 기타 수당은 제외됩니다.</p>
  </div>
@@ -323,7 +323,7 @@ button{border-color:#D4DEE3;background:#fff;color:#25333C}
   <h3>🧮 수당 계산 사용법</h3>
   <div class="guide-step"><span class="guide-n">1</span><div><strong>근무 일정 입력</strong><p>근무표에서 날짜를 누른 뒤 실제 근무는 근무 변경에서, 연가·공가·교육 등은 인정시간에서 별도로 입력합니다. 반주를 선택하면 연가 4시간이 기본으로 설정됩니다. 쉬는 날은 근무 변경을 휴무 등으로 바꿔 중복 집계되지 않게 확인하세요.</p></div></div>
   <div class="guide-step"><span class="guide-n">2</span><div><strong>근무일수 자동 집계</strong><p><b>수당 계산</b>을 누르면 기본 법정시간, 인정시간, 조정 법정시간, 집계 근무시간과 근무일수가 자동 계산됩니다.</p></div></div>
-  <div class="guide-step"><span class="guide-n">3</span><div><strong>수당 단가 입력과 저장</strong><p>시간외수당은 <b>원/시간</b>, 야간·휴일수당은 <b>원/일</b> 단가로 입력합니다. 수정 후 <b>단가 저장</b> 버튼을 누르세요.</p></div></div>
+  <div class="guide-step"><span class="guide-n">3</span><div><strong>수당 단가 입력과 저장</strong><p>시간외수당은 <b>원/시간</b>, 야간·휴일수당은 <b>원/일</b> 단가로 입력합니다. 수정 후 <b>단가 저장</b> 버튼을 누르세요. 조별로 따로 보관됩니다.</p></div></div>
   <div class="guide-step"><span class="guide-n">4</span><div><strong>예상 수당 확인</strong><p>근무표의 변경 내용과 단가를 기준으로 예상 수당이 자동 갱신됩니다. 저장한 단가는 이후 월에도 이어서 적용됩니다.</p></div></div>
   <div class="guide-alert">계산 결과는 편의를 위한 예상값입니다. 실제 인정시간 및 지급액과 차이가 있을 수 있으니 급여 내역을 확인하세요.</div>
  </article>
@@ -593,12 +593,36 @@ document.getElementById('prev').addEventListener('click',function(){moveMonth(-1
 document.getElementById('next').addEventListener('click',function(){moveMonth(1)});
 
 // v21 계산기: 근무표와 동일한 changes, baseStatus 값을 직접 참조한다.
-var calcRateKey='personal_shift_rates_v1',calcRates={};
-try{var storedRates=JSON.parse(localStorage.getItem(calcRateKey)||'{}');if(storedRates&&typeof storedRates==='object'&&!Array.isArray(storedRates))calcRates=storedRates}catch(e){}
+// v32: 단가는 조마다 독립 저장. 기존 v31 공통 단가는 사용자가 쓰던 3조로만 이전한다.
+// 구 버전 원본 키는 삭제하지 않아 이전 기록 및 백업 복구 가능성을 보존한다.
+var calcRateKey='personal_shift_rates_by_group_v2',calcRates={};
+try{
+ var storedRates=JSON.parse(localStorage.getItem(calcRateKey)||'null');
+ if(storedRates&&typeof storedRates==='object'&&!Array.isArray(storedRates)){
+  calcRates=storedRates;
+ }else{
+  calcRates={'1':{},'2':{},'3':{},'4':{}};
+  var oldRates=JSON.parse(localStorage.getItem('personal_shift_rates_v1')||'{}');
+  if(oldRates&&typeof oldRates==='object'&&!Array.isArray(oldRates)){
+   Object.keys(oldRates).forEach(function(k){
+    if(/^\d{4}-\d{2}$/.test(k)&&oldRates[k]&&typeof oldRates[k]==='object'&&!Array.isArray(oldRates[k]))calcRates['3'][k]=oldRates[k];
+   });
+  }
+  // 새 키로 안전하게 복사하며, 구 키는 그대로 둔다.
+  localStorage.setItem(calcRateKey,JSON.stringify(calcRates));
+ }
+}catch(e){
+ // 저장소 접근 오류 시에도 계산 화면 전체가 중단되지 않도록 한다.
+ if(!calcRates||typeof calcRates!=='object')calcRates={};
+}
 function calcYM(){return y+'-'+String(m).padStart(2,'0')}
+function calcGroupRates(){
+ var id=String(group),obj=calcRates[id];
+ return obj&&typeof obj==='object'&&!Array.isArray(obj)?obj:{};
+}
 function calcRatesAt(field){
- var target=calcYM(),keys=Object.keys(calcRates).filter(function(k){return /^\d{4}-\d{2}$/.test(k)&&k<=target}).sort();
- var val='';keys.forEach(function(k){if(calcRates[k]&&Object.prototype.hasOwnProperty.call(calcRates[k],field))val=String(calcRates[k][field])});
+ var rates=calcGroupRates(),target=calcYM(),keys=Object.keys(rates).filter(function(k){return /^\d{4}-\d{2}$/.test(k)&&k<=target}).sort();
+ var val='';keys.forEach(function(k){if(rates[k]&&Object.prototype.hasOwnProperty.call(rates[k],field))val=String(rates[k][field])});
  return val;
 }
 function calcRateNumber(id){var t=document.getElementById(id).value;return t===''?null:Math.max(0,Number(t)||0)}
@@ -680,7 +704,7 @@ function showCalc(){
  document.getElementById('calcNight').textContent=currentCalc.night+'일';
  document.getElementById('calcCountsNote').textContent='수당 대상: 휴일 주간 '+currentCalc.paidHoliday+'일 · 실제 야간 '+currentCalc.paidNight+'일';
  ['Over','Night','Holiday'].forEach(function(s){document.getElementById('rate'+s).value=calcRatesAt(s.toLowerCase())});
- rateDirty=false;setRateMessage('저장된 단가 · 변경 시 저장 버튼을 눌러주세요.',true);
+ rateDirty=false;setRateMessage('선택한 조의 단가 · 변경 시 저장 버튼을 눌러주세요.',true);
  var warnings=[];
  if(!holidays[y])warnings.push(y+'년 공휴일 정보가 없어 법정시간·휴일 구분이 정확하지 않을 수 있습니다.');
  if(currentCalc.notes.length)warnings.push(currentCalc.notes.join(', '));
@@ -757,11 +781,13 @@ document.getElementById('saveCalcRates').addEventListener('click',function(){
   var v=raw===''?'':String(Math.max(0,Math.round(Number(raw)||0)));
   data[k.toLowerCase()]=v;
  });
- var previous=calcRates[ym];calcRates[ym]=data;
+ var groupKey=String(group),rates=calcGroupRates(),previous=rates[ym];
+ // 반드시 현재 선택한 조에만 해당 월의 단가를 저장한다.
+ calcRates[groupKey]=rates;rates[ym]=data;
  try{localStorage.setItem(calcRateKey,JSON.stringify(calcRates))}
- catch(e){if(previous===undefined)delete calcRates[ym];else calcRates[ym]=previous;setRateMessage('저장 실패 · 저장 공간을 확인하세요.',false);return}
+ catch(e){if(previous===undefined)delete rates[ym];else rates[ym]=previous;setRateMessage('저장 실패 · 저장 공간을 확인하세요.',false);return}
  ['Over','Night','Holiday'].forEach(function(k){document.getElementById('rate'+k).value=data[k.toLowerCase()]});
- rateDirty=false;displayCalcPay();setRateMessage(y+'년 '+m+'월 단가 저장 완료 ✓',true);
+ rateDirty=false;displayCalcPay();setRateMessage(group+'조 · '+y+'년 '+m+'월 단가 저장 완료 ✓',true);
 });
 
 document.getElementById('timeCalc').addEventListener('click',function(){
