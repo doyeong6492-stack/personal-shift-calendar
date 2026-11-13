@@ -368,11 +368,54 @@ function baseStatus(year,mon,day,g){
 function safe(t){return String(t||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 
 var holidays={"2026":{"01-01":"신정","02-16":"설 연휴","02-17":"설날","02-18":"설 연휴","03-01":"삼일절","03-02":"대체공휴일","05-01":"노동절","05-05":"어린이날","05-24":"부처님오신날","05-25":"대체공휴일","06-03":"지방선거일","06-06":"현충일","07-17":"제헌절","08-15":"광복절","08-17":"대체공휴일","09-24":"추석 연휴","09-25":"추석","09-26":"추석 연휴","10-03":"개천절","10-05":"대체공휴일","10-09":"한글날","12-25":"성탄절"},"2027":{"01-01":"신정","02-06":"설 연휴","02-07":"설날","02-08":"설 연휴","02-09":"대체공휴일","03-01":"삼일절","05-01":"노동절","05-03":"대체공휴일","05-05":"어린이날","05-13":"부처님오신날","06-06":"현충일","07-17":"제헌절","07-19":"대체공휴일","08-15":"광복절","08-16":"대체공휴일","09-14":"추석 연휴","09-15":"추석","09-16":"추석 연휴","10-03":"개천절","10-04":"대체공휴일","10-09":"한글날","10-11":"대체공휴일","12-25":"성탄절","12-27":"대체공휴일"}};
+var holidaySource='기본 내장 자료';
+var holidayUpdated='';
+var holidayLastCheck=0;
+var holidayCacheKey='personal_shift_holiday_feed_v33';
+function mergeHolidayFeed(payload){
+ if(!payload||typeof payload!=='object'||!payload.years||typeof payload.years!=='object')return false;
+ var added=0;
+ Object.keys(payload.years).forEach(function(year){
+  if(!/^20\d{2}$/.test(year))return;
+  var dates=payload.years[year];if(!dates||typeof dates!=='object'||Array.isArray(dates))return;
+  var clean={};
+  Object.keys(dates).forEach(function(day){
+   if(!/^\d{2}-\d{2}$/.test(day)||typeof dates[day]!=='string'||!dates[day].trim())return;
+   var dt=new Date(year+'-'+day+'T12:00:00Z');
+   if(Number.isNaN(dt.getTime())||dt.toISOString().slice(0,10)!==year+'-'+day)return;
+   clean[day]=dates[day].slice(0,40);
+  });
+  if(Object.keys(clean).length>=5){holidays[year]=clean;added++}
+ });
+ if(!added)return false;
+ holidaySource=payload.source==='KASI-OpenAPI'?'공공데이터 자동 갱신':'기본 공휴일 자료';
+ holidayUpdated=typeof payload.updatedAt==='string'?payload.updatedAt.slice(0,10):'';
+ return true;
+}
+function refreshHolidayViews(){
+ render();
+ if(!document.getElementById('calcArea').hidden&&!rateDirty)showCalc();
+}
+async function syncHolidayFeed(force){
+ if(!navigator.onLine)return;
+ if(!force&&Date.now()-holidayLastCheck<3600000)return;
+ holidayLastCheck=Date.now();
+ try{
+  var response=await fetch('./holidays.json?v=33&t='+Math.floor(Date.now()/3600000),{cache:'no-store'});
+  if(!response.ok)throw Error('HTTP '+response.status);
+  var payload=await response.json();
+  if(!mergeHolidayFeed(payload))throw Error('공휴일 자료 검증 실패');
+  try{localStorage.setItem(holidayCacheKey,JSON.stringify(payload))}catch(err){}
+  refreshHolidayViews();
+ }catch(err){refreshHolidayViews()}
+}
+try{var holidaySaved=localStorage.getItem(holidayCacheKey);if(holidaySaved)mergeHolidayFeed(JSON.parse(holidaySaved))}catch(err){}
+
 var grid=document.getElementById('grid'),month=document.getElementById('month'),buttons=document.getElementById('groups');
 function mod(n){return ((n%4)+4)%4}
 function render(){
  month.textContent=y+'년 '+m+'월';
- document.getElementById('holidayNotice').textContent=holidays[y]?'공휴일 명칭 표시: '+y+'년 · 임시공휴일 및 변경사항은 별도 확인 필요':'공휴일 자료 미확인 연도입니다. 근무 패턴만 표시합니다.';
+ document.getElementById('holidayNotice').textContent=holidays[y]?'공휴일: '+holidaySource+(holidayUpdated?' ('+holidayUpdated+' 확인)':'')+' · 신규 임시공휴일은 제공기관 반영 후 적용':'공휴일 자료 미확인 연도입니다. 해당 연도의 법정시간·수당 계산에 주의하세요.';
  var all=buttons.getElementsByTagName('button');
  for(var a=0;a<all.length;a++)all[a].className=(Number(all[a].getAttribute('data-group'))===group?'on':'');
  var first=new Date(Date.UTC(y,m-1,1)).getUTCDay();
@@ -804,8 +847,11 @@ grid.addEventListener('touchend',function(e){
 // 첫 화면에서도 저장된 조를 적용해 다시 그립니다.
 showLastBackup();
 render();
+syncHolidayFeed(false);
+window.addEventListener('online',function(){syncHolidayFeed(true)});
+document.addEventListener('visibilitychange',function(){if(!document.hidden)syncHolidayFeed(false)});
 })();
-</script><script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js?v=31').catch(function(){})})}</script><script>
+</script><script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js?v=33').catch(function(){})})}</script><script>
 // v31: 기본 <select>의 삼성 브라우저 이전/다음 버튼 대신 간단한 자체 선택창.
 (function(){
  var overlay=document.getElementById('choiceOverlay'), options=document.getElementById('choiceOptions'),title=document.getElementById('choiceTitle'), active=null, trigger=null;
