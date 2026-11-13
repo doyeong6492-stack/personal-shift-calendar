@@ -13,17 +13,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: 한국천문연구원 공휴일 조회
+      - name: 한국천문연구원 공휴일·기념일 조회
         env:
           KASI_SERVICE_KEY: ${{ secrets.KASI_SERVICE_KEY }}
         run: python scripts/update_holidays.py
       - name: 변경된 공휴일 자료 저장
         run: |
-          if ! git diff --quiet -- holidays.json; then
+          if ! git diff --quiet -- holidays.json anniversaries.json; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add holidays.json
-            git commit -m "Update public holiday data"
+            git add holidays.json anniversaries.json
+            git commit -m "Update public holidays and anniversaries"
             git push
           else
             echo "No holiday changes"
