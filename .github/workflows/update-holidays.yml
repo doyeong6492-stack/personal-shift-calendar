@@ -1,0 +1,30 @@
+name: 공휴일 자동 갱신
+on:
+  schedule:
+    - cron: '23 2 * * 1'  # 매주 월요일 11:23 KST
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  update-holidays:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 한국천문연구원 공휴일 조회
+        env:
+          KASI_SERVICE_KEY: ${{ secrets.KASI_SERVICE_KEY }}
+        run: python scripts/update_holidays.py
+      - name: 변경된 공휴일 자료 저장
+        run: |
+          if ! git diff --quiet -- holidays.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add holidays.json
+            git commit -m "Update public holiday data"
+            git push
+          else
+            echo "No holiday changes"
+          fi
